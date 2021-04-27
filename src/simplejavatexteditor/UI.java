@@ -38,24 +38,14 @@
 package simplejavatexteditor;
 
 import java.lang.reflect.Method;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
+import java.awt.datatransfer.*;
+import java.awt.dnd.*;
 import java.awt.event.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
-import javax.swing.text.DefaultEditorKit;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.text.*;
 
 public class UI extends JFrame implements ActionListener {
 
@@ -69,12 +59,16 @@ public class UI extends JFrame implements ActionListener {
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
             aboutMe, aboutSoftware, wordWrap;
     private final JToolBar mainToolbar;
-    JButton newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton, boldButton, italicButton;
+    JButton newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton, boldButton, italicButton, brushButton,
+    paintButton, textcolorButton;
     private final Action selectAllAction;
 
     //setup icons - Bold and Italic
     private final ImageIcon boldIcon = new ImageIcon("icons/bold.png");
     private final ImageIcon italicIcon = new ImageIcon("icons/italic.png");
+    private final ImageIcon paintIcon = new ImageIcon("icons/paint_bucket icon.png");
+    private final ImageIcon brushIcon = new ImageIcon("icons/brush.png");
+    private final ImageIcon textcolorIcon = new ImageIcon("icons/textcolor.png");
 
     // setup icons - File Menu
     private final ImageIcon newIcon = new ImageIcon("icons/new.png");
@@ -112,7 +106,7 @@ public class UI extends JFrame implements ActionListener {
         }
 
         // Set the initial size of the window
-        setSize(800, 500);
+        setSize(950, 600);
 
         // Set the title of the window
         setTitle("Untitled | " + SimpleJavaTextEditor.NAME);
@@ -361,6 +355,52 @@ public class UI extends JFrame implements ActionListener {
         italicButton.addActionListener(this);
         mainToolbar.add(italicButton);
         mainToolbar.addSeparator();
+        
+        brushButton = new JButton(brushIcon);
+        brushButton.setToolTipText("Canvas");
+        brushButton.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		new Canvasframe();
+        		
+        	}
+        });
+        mainToolbar.add(brushButton);
+        mainToolbar.addSeparator();
+        
+        JColorChooser CChooser = new JColorChooser();
+        
+        class BGListener implements ActionListener{
+        	public void actionPerformed(ActionEvent e) {
+        		JButton button = (JButton) e.getSource();
+        		Color c = CChooser.showDialog(null, "배경 색상 선택", Color.WHITE);
+        		if(c != null) {
+        			textArea.setBackground(c);
+        		}
+        	}
+        }
+        
+        paintButton = new JButton(paintIcon);
+        paintButton.setToolTipText("Background Color");
+        paintButton.addActionListener(new BGListener());
+        mainToolbar.add(paintButton);
+        mainToolbar.addSeparator();
+        
+        class TCListener implements ActionListener{
+        	public void actionPerformed(ActionEvent e) {
+        		JButton button = (JButton) e.getSource();
+        		Color tc = CChooser.showDialog(null,"텍스트 색상 선택",Color.WHITE);
+        		if(tc != null) {
+        			textArea.setForeground(tc);
+        		}
+        	}
+        }
+        
+        textcolorButton = new JButton(textcolorIcon);
+        textcolorButton.setToolTipText("Text Color Change");
+        textcolorButton.addActionListener(new TCListener());
+        mainToolbar.add(textcolorButton);
+        mainToolbar.addSeparator();
+
         /**
          * **************** FONT SETTINGS SECTION **********************
          */
